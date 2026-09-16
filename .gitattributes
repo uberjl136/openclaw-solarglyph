@@ -1,0 +1,15 @@
+# Line-ending policy.
+#
+# Our own sources are always LF.
+*.js   text eol=lf
+*.cjs  text eol=lf
+*.mjs  text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+
+# The vendored upstream snapshot is a byte-faithful copy of the official
+# release archive, and upstream ships CRLF in a few files (Windows scripts)
+# while its own .gitattributes rewrites them to LF. This rule sits at a
+# shallower path depth than the snapshot's own .gitattributes, so it wins and
+# keeps the snapshot byte-identical to the archive it was extracted from.
+upstream/** -text

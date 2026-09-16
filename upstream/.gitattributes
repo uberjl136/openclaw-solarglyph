@@ -1,0 +1,8 @@
+# Vendor snapshot line-ending policy.
+#
+# This file overrides the snapshot's own `.gitattributes` (`* text=auto eol=lf`)
+# for every path below `upstream/`, because rules in a shallower directory win
+# over deeper ones. The snapshot is a byte-faithful copy of the official release
+# archive, which ships CRLF in a few Windows scripts; recording it with `-text`
+# keeps the committed bytes identical to the archive they came from.
+* -text

@@ -1,0 +1,112 @@
+// Transcript artifact usage, previews, and response bounds.
+import fs from "node:fs";
+import { expectDefined } from "@openclaw/normalization-core";
+import { streamSessionTranscriptLines } from "../config/sessions/transcript-stream.js";
+import { jsonUtf8Bytes } from "../infra/json-utf8-bytes.js";
+import { projectSessionDisplayMessage } from "./session-display-projection.js";
+import { findExistingTranscriptPath } from "./session-transcript-archive-reader.js";
+import {
+  aggregateSessionTranscriptUsage,
+  type SessionTranscriptUsageSnapshot,
+} from "./session-transcript-derived-readers.js";
+import { isOversizedTranscriptLine } from "./session-transcript-record-parser.js";
+import type { SessionPreviewItem } from "./session-utils.types.js";
+
+export type { SessionTranscriptUsageSnapshot } from "./session-transcript-derived-readers.js";
+
+export { resolveSessionTranscriptCandidates } from "./session-transcript-files.fs.js";
+
+export function capArrayByJsonBytes<T>(
+  items: T[],
+  maxBytes: number,
+  byteLength: (item: T) => number = jsonUtf8Bytes,
+): { items: T[]; bytes: number } {
+  if (items.length === 0) {
+    return { items, bytes: 2 };
+  }
+  const parts = items.map(byteLength);
+  let bytes = 2 + parts.reduce((a, b) => a + b, 0) + (items.length - 1);
+  let start = 0;
+  while (bytes > maxBytes && start < items.length - 1) {
+    bytes -= expectDefined(parts[start], "parts entry at start") + 1;
+    start += 1;
+  }
+  const next = start > 0 ? items.slice(start) : items;
+  return { items: next, bytes };
+}
+
+export async function readLatestSessionUsageFromTranscriptFileAsync(
+  sessionId: string,
+  storePath: string | undefined,
+  sessionFile?: string,
+  agentId?: string,
+): Promise<SessionTranscriptUsageSnapshot | null> {
+  const filePath = findExistingTranscriptPath(sessionId, storePath, sessionFile, agentId);
+  if (!filePath) {
+    return null;
+  }
+
+  try {
+    const stat = await fs.promises.stat(filePath);
+    if (stat.size === 0) {
+      return null;
+    }
+    const messages: unknown[] = [];
+    for await (const line of streamSessionTranscriptLines(filePath)) {
+      if (isOversizedTranscriptLine(line)) {
+        continue;
+      }
+      try {
+        const record = JSON.parse(line) as Record<string, unknown>;
+        if (
+          !record.message ||
+          typeof record.message !== "object" ||
+          Array.isArray(record.message)
+        ) {
+          continue;
+        }
+        const message = record.message as Record<string, unknown>;
+        const usage =
+          message.usage && typeof message.usage === "object" && !Array.isArray(message.usage)
+            ? message.usage
+            : record.usage;
+        messages.push({
+          ...message,
+          ...(typeof message.provider !== "string" && typeof record.provider === "string"
+            ? { provider: record.provider }
+            : {}),
+          ...(typeof message.model !== "string" && typeof record.model === "string"
+            ? { model: record.model }
+            : {}),
+          ...(usage && typeof usage === "object" && !Array.isArray(usage) ? { usage } : {}),
+        });
+      } catch {
+        continue;
+      }
+    }
+    return aggregateSessionTranscriptUsage(messages, "artifact");
+  } catch {
+    return null;
+  }
+}
+
+export function buildSessionPreviewItems(
+  messages: readonly unknown[],
+  maxItems: number,
+  maxChars: number,
+  view: "display" | "model-context" = "display",
+): SessionPreviewItem[] {
+  const items: SessionPreviewItem[] = [];
+  for (const message of messages) {
+    const projected = projectSessionDisplayMessage(message, { maxChars, view });
+    if (!projected) {
+      continue;
+    }
+    items.push(projected);
+  }
+
+  if (items.length <= maxItems) {
+    return items;
+  }
+  return items.slice(-maxItems);
+}

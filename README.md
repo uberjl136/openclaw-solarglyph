@@ -216,10 +216,11 @@ ORC 年发电量      37.8 万kWh
 
 ## 七、许可与来源
 
-- **上游 OpenClaw**：许可见 `upstream/openclaw-main/LICENSE`（GitHub API 标记为自定义
-  `NOASSERTION`，非标准 MIT，使用前请阅读原文）。上游仓库：
+- **上游 OpenClaw**：**MIT License**，Copyright (c) 2026 OpenClaw Foundation
+  （GitHub API 将仓库许可证标记为 `NOASSERTION`，实际 `LICENSE` 文件为标准 MIT，以文件为准；
+  全文见 `upstream/openclaw-main/LICENSE`）。上游仓库：
   <https://github.com/openclaw/openclaw>，快照提交 `ad1c9345f2cbbeee32fc006b963da86001bffbaa`
-  （2026-09-16，`main`）。
+  （2026-09-16，`main`，版本 `2026.9.4`）。
 - **本团队自研部分**（`work/solarglyph-skill/**`）：MIT，见 `LICENSE`。
 - **算法来源**：光伏/辐照/储热/电气公式逆向自 SolarGlyph 工程站点打包产物，
   逐条对照见 `docs/solarglyph-algorithm-provenance.md`；余热回收模块为本团队原创。
