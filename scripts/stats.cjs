@@ -15,7 +15,17 @@ const ROOT = path.resolve(__dirname, '..');
 const UPSTREAM = path.join(ROOT, 'upstream', 'openclaw-main');
 
 /** Directories never worth walking. */
-const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.artifacts', 'coverage']);
+const SKIP_DIRS = new Set([
+  'node_modules',
+  '.git',
+  'dist',
+  'dist-runtime',
+  'build',
+  '.artifacts',
+  'coverage',
+  '.turbo',
+  'locale-modules',
+]);
 
 /** Language buckets, by extension. */
 const LANG = {
@@ -111,7 +121,7 @@ console.log('SolarGlyph skill — code footprint');
 console.log('═'.repeat(62));
 console.log(`our extension      : ${ours.files} files, ${ours.lines} lines, ${kb(ours.size)}`);
 console.log(`upstream snapshot  : ${upstream.files} files, ${upstream.lines} lines, ${kb(upstream.size)}`);
-console.log(`our share of bytes : ${pct(ours.size, ours.size + upstream.size)}`);
+console.log(`our share of bytes : ${pct(ours.size, ours.size + upstream.size)} (${((ours.size / (ours.size + upstream.size)) * 100).toFixed(3)}%)`);
 console.log('─'.repeat(62));
 console.log('our files by language:');
 for (const [lang, v] of [...ours.byLang.entries()].sort((a, b) => b[1].size - a[1].size)) {
