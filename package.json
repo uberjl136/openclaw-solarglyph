@@ -1,0 +1,24 @@
+{
+  "name": "openclaw-solarglyph-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SolarGlyph photovoltaic + waste-heat simulation service and the OpenClaw skill that drives it.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.16.0 <25 || >=26.1.0"
+  },
+  "scripts": {
+    "start": "node solarglyph-core/server.js",
+    "smoke": "node smoke.cjs",
+    "test:e2e": "node e2e-http.cjs",
+    "sync-skill": "node scripts/sync-skill.cjs",
+    "verify-skill": "node scripts/verify-skill.cjs",
+    "check": "node scripts/verify-skill.cjs && node smoke.cjs"
+  },
+  "files": [
+    "solarglyph-core",
+    "scripts",
+    "skills",
+    "docs"
+  ]
+}

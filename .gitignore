@@ -1,0 +1,33 @@
+# Dependencies (install with `pnpm install --frozen-lockfile` inside upstream/openclaw-main)
+node_modules/
+.pnpm-store/
+
+# Upstream snapshot is materialized by scripts/snapshot-upstream.cjs.
+# It is committed on the feature branch as vendored content; keep it out of the
+# default ignore list so `git add` can stage it explicitly.
+
+# Build output and caches
+dist/
+build/
+.artifacts/
+*.tsbuildinfo
+
+# Local state, logs, and reports produced by test runs
+logs/
+*.log
+runs/
+reports/local/
+demo-output/
+
+# Editor / OS noise
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+
+# Secrets — never commit credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
