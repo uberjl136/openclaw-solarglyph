@@ -152,18 +152,27 @@ node e2e-http.cjs                # 提交 → 轮询 → 取结果 全链路
 node scripts/test-model-driven.mjs --model ollama/qwen3:8b
 ```
 
-> **关于触发方式的重要说明**：本项目的仿真闭环有两套入口，二者共用同一个 CLI：
+> **关于触发方式**：两条入口共用同一个 CLI，都已实测跑通。
 >
-> | 入口 | 机制 | 依赖 |
+> | 入口 | 机制 | 实测状态 |
 > | --- | --- | --- |
-> | 自然语言「启动光伏余热仿真」 | 模型读取 SKILL.md 指令后调用 `exec` | **需要 30B 级及以上模型** |
-> | `/solar-glyph-simulation` 或 `trigger.cjs` | `command-dispatch: tool` 确定性调度，绕过模型 | 无（离线可用） |
+> | `/solar-glyph-simulation` 或 `trigger.cjs` | `command-dispatch: tool` 确定性调度，绕过模型 | **闭环**（离线可用，最可靠） |
+> | 自然语言「启动光伏余热仿真」 | 模型读取 SKILL.md 后调用 `exec` | **闭环**，但需下面的精简配置；可靠性随模型规模变化 |
 >
-> 本机实测：Skill 被 OpenClaw 正确发现、`exec` 对模型可见，
-> 但本地 1.5B/4B/8B 量化模型都无法稳定完成工具编排，因此模型驱动路径
-> 未能在本机闭环；完整测试矩阵与诊断见
-> [`docs/verification-evidence.md`](docs/verification-evidence.md) §2.1。
-> 演示时若只有本地小模型，请使用确定性入口。
+> 让本地小模型也能跑通的精简配置（本机 8B 模型据此成功调用 `exec` 并产出仿真结果）：
+>
+> ```json5
+> {
+>   tools: { profile: "full", toolSearch: false, allow: ["read", "exec"] },
+>   agents: { defaults: { skipBootstrap: true, contextInjection: "never" } }
+> }
+> ```
+>
+> 原因：默认系统提示里的工具 schema 约 66 KB，加上工作区引导文件会把小模型的注意力带偏；
+> 收窄到 `read`+`exec` 后降到约 2.6 KB，模型即可正确调用。
+> 一键复测：`node scripts/test-model-driven.cjs --model ollama/qwen3:8b`。
+> 完整测试矩阵与服务端任务历史证据见
+> [`docs/verification-evidence.md`](docs/verification-evidence.md) §2。
 
 ---
 

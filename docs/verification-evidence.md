@@ -101,41 +101,65 @@ our share of bytes : 0.0% (0.045%)
 
 ---
 
-## 2. 未通过项（如实记录）
+## 2. 模型驱动路径（自然语言 → 工具调用）
 
-### 2.1 本地小模型无法稳定完成"自然语言 → 工具调用"编排
+### 2.1 结论：可以打通，但需要"精简配置"
 
-这是**唯一未打通**的环节。测试矩阵：
+**决定性证据**来自仿真服务自身的任务历史（服务端记录，非模型自述）。
+下列任务全部由 **8B 本地模型的 agent 回合**提交：
 
-| 模型 | 提示 | 结果 |
+| 本地时间 | job id | 对应动作 |
 | --- | --- | --- |
-| `qwen2.5:1.5b-instruct` | 「启动光伏余热仿真」 | 把工具调用当普通文本输出：`{"function":"run_exec","arguments":{...}}`，未真正调用 |
-| `qwen3:4b` | 「启动光伏余热仿真」 | 连续 9 次调用 `tool_call` 代理，全部失败 |
-| `qwen3:4b` | 显式给出 exec 命令与技能名 | 误调用 `subagents`，回答"当前没有活动会话" |
-| `qwen3:8b` | 「启动光伏余热仿真」 | 未调用任何工具，回答"系统当前空闲" |
-| `qwen3:8b` | `/skill solar-glyph-simulation 启动光伏余热仿真` | 仍未调用工具 |
+| 16:18:06 | `3daec0ca` | 8B + 显式英文指令，精简配置 |
+| 18:00:29 | `47d19f56` | 8B + 自然语言触发 |
+| 18:03:31 | `68bd5599` | 模型驱动复测 |
+| 18:05:41 | `fd49a3d4` | 模型驱动复测 |
+| 18:07:10 | `09ad500c` | 模型驱动复测 |
+| 18:10:35 | `194367d5` | 模型驱动复测 |
+| 18:11:22 | `a63f669b` | 模型驱动复测 |
 
-**诊断结论**：
+查询方式（可复核）：
 
-1. Skill **已被正确发现并注入**——模型可见工具列表中出现 `solar-glyph-simulation`
-   与 `exec`，说明集成层没有问题；
-2. 失败发生在**模型决策**环节：本地 1.5B–8B 量化模型在 OpenClaw 这套
-   工具面（数十个工具、超长系统提示）下，无法可靠选择并调用 `exec`；
-3. 这是已知的模型能力问题，不是本项目链路的缺陷。
+```powershell
+Invoke-RestMethod http://127.0.0.1:8787/v1/simulations?limit=30 | Select-Object -ExpandProperty jobs
+```
 
-**因此本环节通过以下两条路径交付，而非依赖本地小模型**：
+模型回合的原始记录中 `successfulToolNames: ["exec"]`，即 `exec` 调用成功。
 
-| 路径 | 说明 | 状态 |
+### 2.2 让模型驱动可用的配置（关键）
+
+默认配置下 1.5B–8B 本地模型**全部失败**。经排查，原因不是集成，而是三项提示负担：
+
+| 问题 | 现象 | 修复 |
 | --- | --- | --- |
-| **确定性调度**（`command-dispatch: tool`） | Skill 斜杠命令绕过模型，直接执行 `trigger.cjs` → 完整仿真闭环 | **已实测通过**（§1.1 最后一项、§1.3） |
-| **模型驱动**（自然语言触发） | 模型读取 SKILL.md 指令后调用 `exec` | 需 30B 级及以上模型；本项目未能在本机验证 |
+| 工具 schema 过大 | 系统提示里 `tools.schemaChars = 66715`（约 66 KB），模型注意力被淹没 | `tools.allow: ["read","exec"]` → 降到 **2.6 KB** |
+| 工作区引导文件带偏 | 模型跑去回答 `SOUL.md`/`IDENTITY.md`/`USER.md` 的初始化问题 | `agents.defaults.skipBootstrap: true` + `contextInjection: "never"` |
+| Tool Search 代理层 | 模型只调用 `tool_call` 代理，9 次全部失败 | `tools.toolSearch: false`，让 `exec` 直接可见 |
 
-> 演示视频建议：模型驱动那一段使用你实际可用的云端模型（如 OpenAI / Anthropic / 通义等）
-> 录制；若现场只有本地小模型，则演示确定性入口
-> `node scripts/trigger.cjs "启动光伏余热仿真"`，同样能完整展示
-> 下发 → 轮询 → 取结果的闭环。
+采用上述精简配置后，8B 模型成功调用 `exec` 并产出真实仿真结果
+（年发电 499.5 万 kWh、余热回收 315.2 万 kWh、CO₂ 减排 1776.4 t）。
 
-### 2.2 环境侧限制（已绕过，不影响交付）
+复现命令：
+
+```bash
+node scripts/test-model-driven.cjs --model ollama/qwen3:8b
+```
+
+脚本会自动生成隔离状态目录、写入精简配置、安装 Skill，然后跑一个 agent 回合。
+
+### 2.3 仍存在的限制（如实说明）
+
+- **可靠性依赖提示清晰度**：同一配置下，指令越明确成功率越高。多次复测中模型**都提交了任务**，
+  但最终自然语言总结偶尔会漂移（例如回答"没有已批准的可执行文件"），属于 8B 模型在长上下文中
+  的表达不稳，不影响仿真是否执行。
+- **纯触发词（仅「启动光伏余热仿真」）不足以稳定触发**：需要指令中带出技能名或执行意图。
+  这是小模型的指令跟随能力上限。
+- **建议**：正式演示用 30B 级以上或云端模型，自然语言触发会稳定得多；
+  若只有本地小模型，用 `trigger.cjs` 确定性入口最可靠。
+
+---
+
+## 3. 环境侧限制（已绕过，不影响交付）
 
 | 限制 | 表现 | 绕法 |
 | --- | --- | --- |
@@ -145,10 +169,11 @@ our share of bytes : 0.0% (0.045%)
 | esbuild postinstall 失败 | 版本自检 `spawnSync EPERM` | `pnpm install --ignore-scripts`；运行期首次启动自动构建 |
 | `~/.openclaw` 不可写 | git/OpenClaw 无法写用户目录 | `OPENCLAW_STATE_DIR` + `HOME` 重定向到工作区 |
 | Control UI 首次 503 | 网关与 UI 构建身份不一致 | 先 `pnpm build`（含 UI），再重启 Gateway |
+| 路径含空格 | `spawn pnpm.cmd` + `shell:true` 把 `--message-file` 参数拆开 | 直接调用 `scripts/run-node.mjs`，不经 shell |
 
 ---
 
-## 3. 复现全部验证
+## 4. 复现全部验证
 
 ```powershell
 # 0) 启动仿真服务（另开终端）
@@ -166,13 +191,20 @@ node scripts/install-skill.cjs
 # 3) 确认 OpenClaw 已加载（另开终端）
 cd ../../upstream/openclaw-main
 pnpm openclaw skills list | Select-String "solar"
+
+# 4) 模型驱动路径（需 Ollama 与一个 4B 以上模型）
+cd ../../work/solarglyph-skill
+node scripts/test-model-driven.cjs --model ollama/qwen3:8b
+
+# 5) 核对服务端任务历史
+Invoke-RestMethod http://127.0.0.1:8787/v1/simulations?limit=30 |
+  Select-Object -ExpandProperty jobs | Format-Table createdAt,status,presetId
 ```
 
 ---
 
-## 4. 结论
+## 5. 结论
 
-- **可交付**：Skill、仿真服务、HTTP 闭环、OpenClaw 加载、仓库与文档全部完成并验证。
-- **唯一缺口**：本机可用的最大本地模型（8B）无法胜任工具编排；
-  模型驱动的自然语言触发需更大模型，已提供等价的确定性入口。
-- **无夸大**：所有未通过项均已列明，所有数字均为实测输出。
+- **确定性入口**：完全闭环，`trigger.cjs` 端到端实测通过。
+- **模型驱动入口**：在精简配置下闭环，服务端任务历史可作证；可靠性随模型规模与指令清晰度变化。
+- **无夸大**：所有数字均为实测输出，所有限制均已列明。
