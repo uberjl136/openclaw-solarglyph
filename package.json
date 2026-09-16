@@ -13,6 +13,8 @@
     "test:e2e": "node e2e-http.cjs",
     "sync-skill": "node scripts/sync-skill.cjs",
     "verify-skill": "node scripts/verify-skill.cjs",
+    "test:model": "node scripts/test-model-driven.mjs",
+    "stats": "node scripts/stats.cjs",
     "check": "node scripts/verify-skill.cjs && node smoke.cjs"
   },
   "files": [

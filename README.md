@@ -147,7 +147,23 @@ node scripts/verify-skill.cjs    # Skill 包完整性、自包含性、确定性
 node smoke.cjs                   # 四套预设场景全部跑通
 # 需要服务在线时：
 node e2e-http.cjs                # 提交 → 轮询 → 取结果 全链路
+
+# 模型驱动路径复测（需一个能力足够的模型）
+node scripts/test-model-driven.mjs --model ollama/qwen3:8b
 ```
+
+> **关于触发方式的重要说明**：本项目的仿真闭环有两套入口，二者共用同一个 CLI：
+>
+> | 入口 | 机制 | 依赖 |
+> | --- | --- | --- |
+> | 自然语言「启动光伏余热仿真」 | 模型读取 SKILL.md 指令后调用 `exec` | **需要 30B 级及以上模型** |
+> | `/solar-glyph-simulation` 或 `trigger.cjs` | `command-dispatch: tool` 确定性调度，绕过模型 | 无（离线可用） |
+>
+> 本机实测：Skill 被 OpenClaw 正确发现、`exec` 对模型可见，
+> 但本地 1.5B/4B/8B 量化模型都无法稳定完成工具编排，因此模型驱动路径
+> 未能在本机闭环；完整测试矩阵与诊断见
+> [`docs/verification-evidence.md`](docs/verification-evidence.md) §2.1。
+> 演示时若只有本地小模型，请使用确定性入口。
 
 ---
 
@@ -237,11 +253,46 @@ ORC 年发电量      37.8 万kWh
 年减排 CO₂        1776.4 t
 ```
 
-详细日志与截图见 `docs/`。
+详细日志与截图见 `docs/`。完整的实测记录、测试矩阵与**未通过项**见
+[`docs/verification-evidence.md`](docs/verification-evidence.md)。
 
 ---
 
-## 七、许可与来源
+## 七、推送到你自己的 fork
+
+本仓库已完成本地 git 初始化与分支划分，但**尚未推送到 GitHub**
+（推送需要你自己的账号凭据）。按下面步骤建立可提交的线上仓库：
+
+```bash
+# 1) 在 GitHub 网页上 fork 官方仓库（无需本地操作）
+#    https://github.com/openclaw/openclaw → Fork
+
+# 2) 把 fork 添加为远端并推送
+cd work/solarglyph-skill
+git remote add origin https://github.com/<你的账号>/openclaw.git
+git push -u origin main
+git push -u origin feature/solar-glyph-simulation
+
+# 3) 保留上游连接，便于评委核对血缘
+git remote add upstream https://github.com/openclaw/openclaw.git
+git fetch upstream
+```
+
+提交前建议核对：
+
+```bash
+git log --oneline --graph --all      # 分支与提交边界
+git show --stat 18f5381              # Skill 的单独提交
+```
+
+> 本环境原生 TLS 受限，`git push` 无法在此执行；请在本机或 CI 环境推送。
+> 若你的 fork 已有完整上游历史，用
+> `git rebase --onto upstream/main 38ac45bc feature/solar-glyph-simulation`
+> 把自研提交重放到真实上游历史之上，即可得到与官方仓库同源的干净分支。
+
+---
+
+## 八、许可与来源
 
 - **上游 OpenClaw**：**MIT License**，Copyright (c) 2026 OpenClaw Foundation
   （GitHub API 将仓库许可证标记为 `NOASSERTION`，实际 `LICENSE` 文件为标准 MIT，以文件为准；
@@ -253,4 +304,4 @@ ORC 年发电量      37.8 万kWh
   逐条对照见 `docs/solarglyph-algorithm-provenance.md`；余热回收模块为本团队原创。
 - **上游快照获取方式**：本环境原生 TLS 受限，无法直接 `git clone`，改用
   `codeload` 源码快照 + Node 解包器（`tools/untar.mjs`）落地。复现方式见
-  `work/solarglyph-skill/docs/deployment.md`。
+  `docs/deployment.md`；快照已作为 vendored 目录提交（`38ac45bc`），字节与官方发布包一致。
