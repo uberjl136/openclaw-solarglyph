@@ -103,7 +103,7 @@ node scripts/install-skill.cjs
 
 # 3) 启动 Gateway 并在浏览器打开控制台
 cd ../../upstream/openclaw-main
-pnpm openclaw gateway
+pnpm openclaw gateway          # 控制台默认 http://127.0.0.1:18789/
 ```
 
 然后在网页会话里直接输入：
@@ -112,11 +112,38 @@ pnpm openclaw gateway
 启动光伏余热仿真
 ```
 
+### 3.3.1 模型从哪来
+
+OpenClaw 需要一个模型来驱动对话。**离线环境可以用本地 Ollama**，无需任何云端凭据：
+
+```bash
+ollama pull qwen3:4b                  # 建议 4B 以上，小模型难以稳定编排工具调用
+```
+
+在 `$OPENCLAW_STATE_DIR/openclaw.json` 里配置：
+
+```json5
+{
+  gateway: { mode: "local" },
+  // 完整工具面：exec 属于 group:runtime，缺省 profile 可能不暴露它
+  tools: { profile: "full", toolSearch: false },
+  models: {
+    providers: {
+      ollama: { baseUrl: "http://127.0.0.1:11434/v1", apiKey: "ollama-local", api: "openai-completions" }
+    }
+  },
+  agents: { defaults: { model: "ollama/qwen3:4b" } }
+}
+```
+
+> 本地模型默认会启用 Tool Search（把工具藏到 `tool_search`/`tool_call` 代理后面），
+> 小模型往往因此编排失败；上面的 `tools.toolSearch: false` 让 `exec` 直接可见。
+
 ### 3.4 一键自检
 
 ```bash
 cd work/solarglyph-skill
-node scripts/verify-skill.cjs    # Skill 包完整性、自包含性、确定性
+node scripts/verify-skill.cjs    # Skill 包完整性、自包含性、确定性、触发链路
 node smoke.cjs                   # 四套预设场景全部跑通
 # 需要服务在线时：
 node e2e-http.cjs                # 提交 → 轮询 → 取结果 全链路
