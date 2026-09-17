@@ -1,180 +1,189 @@
-# 演示视频脚本（约 5–7 分钟）
+# 演示视频脚本（3—5 分钟，符合官方硬性要求）
 
-拍摄目标：让评委一眼看清三件事 ——
-**① 原版 OpenClaw 做不到光伏仿真；② 加载自研 Skill 后能自动调度 SolarGlyph 跑完仿真；③ 仓库里原生代码与自研 Skill 界限清晰。**
+官方要求（附件 1·四·4）：**MP4，时长 3—5 分钟，≤300 MB**；
+视频须清晰展示**作品核心功能、操作流程、实现效果，以及开源项目改进或开放成果**。
 
-录制前准备（每项都在终端里可见）：
+同时受公平性约束（规则三·九）：**全片不得出现学校名称、学校 LOGO、指导教师信息**。
+
+下面按 4 分钟设计（留 1 分钟余量），总计约 4:00。
+
+---
+
+## 录制前准备
 
 ```powershell
 # 终端 A：仿真服务
 cd work/solarglyph-skill; node solarglyph-core/server.js
 
 # 终端 B：OpenClaw Gateway
-cd upstream/openclaw-main; pnpm openclaw gateway     # http://127.0.0.1:18789/
+cd upstream/openclaw-main; pnpm openclaw gateway     # 控制台 http://127.0.0.1:18789/
+```
+
+前置检查：
+
+- [ ] 终端字号 16—18pt，录屏可读
+- [ ] 待用的命令提前进历史，避免现场手打
+- [ ] 隐藏桌面/任务栏/浏览器书签中的学校相关信息
+- [ ] 关闭可能弹出通知的软件
+
+---
+
+## 0:00—0:30 ｜ 开场：问题是什么
+
+**画面**：PPT 或字幕卡（1 页）+ 终端。
+
+**旁白**：
+
+> 工业厂区屋顶光伏项目，方案阶段要回答两个问题：**一年能发多少电？余热能回收多少？**
+> 常规做法是人工翻气象数据、套 Excel 公式，慢且不可复现。
+> 通用 AI 智能体虽然会调用工具，却**不具备任何光伏与余热工程计算能力**。
+> 我们基于开源智能体框架 OpenClaw，做了一个新能源仿真 Skill，让一句自然语言指令完成整套仿真。
+
+**画面操作**：展示上游内置能力清单，指出没有新能源相关项。
+
+```powershell
+cd upstream/openclaw-main
+pnpm openclaw skills list | Select-String "1password|weather|github|notion"
+```
+
+> 这些都是 OpenClaw 原生的通用能力——笔记、邮件、GitHub、天气。**没有任何一个能算光伏或余热。**
+
+---
+
+## 0:30—1:20 ｜ 原版做不到，我们加了什么
+
+**画面**：文件管理器展示自研目录 + 编辑器打开 `SKILL.md`。
+
+**旁白**：
+
+> 我们没有改动 OpenClaw 的底层源码。上游代码原样保留在 `upstream` 目录，
+> 我们的扩展全部放在独立的 `work/solarglyph-skill` 仓库里。
+
+**画面操作**：逐项指认
+
+```
+skills/solar-glyph-simulation/SKILL.md     ← Skill 定义：触发词 + 四步流程 + HTTP 契约
+solarglyph-core/engine.js                  ← 光伏/余热工程模型
+solarglyph-core/server.js                  ← 仿真服务（HTTP 任务队列）
+docs/solarglyph-algorithm-provenance.md    ← 20 条公式逐条溯源，标注自研边界
+```
+
+**旁白要点**：
+
+> 工程算法来自 SolarGlyph 工程平台的前端打包产物。我们先确认了一件事：
+> **该站点没有仿真接口**——服务端只有登录和地理编码，所有计算都在浏览器里。
+> 所以我们把算法固化成了一套真实可调用的 HTTP 仿真服务，再由 Skill 驱动它。
+> **余热回收模块是我们自己加的**，原站点完全没有这块。
+
+---
+
+## 1:20—2:40 ｜ 核心演示：全自动跑完一次仿真（重点段）
+
+**画面**：OpenClaw 网页控制台 + 终端 A（左右并排或快速切换）。
+
+**操作 1**：在网页输入框输入
+
+```
+启动光伏余热仿真
+```
+
+**旁白（跟随进度解说）**：
+
+> 我输入的是自然语言，模型命中 Skill 后调用 exec 工具执行仿真脚本。
+> 请看终端：任务已经提交，服务返回任务号；接着是**真实的轮询过程**——
+> 加载站点输入、倾斜面辐照换算、求解光伏与余热、汇总结果。
+
+**画面**：终端逐条滚出
+
+```
+[solarglyph] trigger matched "启动光伏余热仿真" -> preset industrial-rooftop-5mw
+[solarglyph] submitted job <uuid>
+[solarglyph] loading-site-inputs 25%
+[solarglyph] transposing-irradiance 50%
+[solarglyph] solving-pv-and-waste-heat 70%
+[solarglyph] aggregating-results 90%
+[solarglyph] succeeded 100%
+```
+
+**画面**：结果表
+
+```
+倾斜面年辐照量   1492.1 kWh/m²（相对水平面 +14.8%）
+年发电量         499.5 万kWh（4995 MWh）
+单位发电量       998.9 kWh/kWp·年
+余热年回收热量    315.2 万kWh（11347 GJ）
+ORC 年发电量     37.8 万kWh
+年减排 CO₂       1776.4 t
+```
+
+**操作 2**：再跑一次换参数，证明是活的计算而非写死。
+
+```
+把容量从 5MW 换成 1MW，倾角改成 25 度，再跑一次
+```
+
+**旁白**：数字随参数变化，说明背后是真实求解；每次仿真都是独立的异步任务，可查历史。
+
+**操作 3**：展示服务端任务历史（可核验证据）。
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8787/v1/simulations?limit=10 |
+  Select-Object -ExpandProperty jobs | Format-Table createdAt,status,presetId
 ```
 
 ---
 
-## 第 1 幕：原版能力基线（约 60 秒）
+## 2:40—3:30 ｜ 开源改进与开放成果
 
-**画面**：终端 + 浏览器。
+**画面**：终端跑校验脚本 + git 历史。
 
-1. 展示上游内置 Skill 清单，指出没有任何新能源能力：
+**旁白**：
 
-   ```powershell
-   cd upstream/openclaw-main
-   pnpm openclaw skills list | Select-String "1password|weather|github|notion|skills"
-   ```
+> 相对上游 OpenClaw，我们的实质改进有三处，都可独立核验：
+> 第一，新增垂直场景 Skill；第二，自研了配套的仿真服务；第三，打通了完整自动化闭环。
+> 同时我们提供了确定性入口——不依赖模型也能跑，便于复现。
 
-   > 解说：这是官方 OpenClaw 的 50 余个内置 Skill —— 笔记、邮件、GitHub、天气、智能家居……
-   > **没有任何一个能算光伏或余热**。它是通用智能体底座，不是行业应用。
+**画面操作**：
 
-2. 打开 `upstream/openclaw-main/skills` 目录，说明这些都是上游原生能力。
+```powershell
+cd work/solarglyph-skill
+node scripts/verify-skill.cjs        # 7 项校验全绿
+git log --oneline --graph --all      # 分支与提交边界
+git show --stat 18f5381              # Skill 的单独提交
+```
 
-3. （可选，若已配置模型）在不加载本 Skill 的状态下问：
-   「上海一个 5MW 厂区屋顶光伏一年发多少电？余热能回收多少？」
-   > 解说：它只能给出定性的泛泛估计，拿不到可核对的工程数字，也无法调用任何仿真服务。
+**旁白**：
 
-**本条要证明**：原版做不了这件事。
+> Skill 与仿真服务是**单独的分支、单独的提交**，与上游快照边界清晰。
+> 上游快照是官方发布包的字节忠实副本，我们**没有改过任何一行上游代码**。
 
----
+**画面**：`docs/solarglyph-algorithm-provenance.md` 的对照表（滚动展示）
 
-## 第 2 幕：加载自研 Skill（约 90 秒）
-
-**画面**：文件管理器 + 编辑器 + 终端。
-
-1. 打开自研 Skill 目录，逐项指明这是新增内容（非上游）：
-
-   ```
-   work/solarglyph-skill/
-   ├── skills/solar-glyph-simulation/SKILL.md      ← Skill 定义（触发词、四步流程、HTTP 契约）
-   ├── skills/solar-glyph-simulation/scripts/      ← 桥接 CLI + 触发词映射
-   ├── solarglyph-core/                            ← 仿真引擎 + HTTP 服务（自研）
-   └── docs/                                       ← 算法溯源、部署、报告
-   ```
-
-2. 高亮 `SKILL.md` 的关键部分：
-   - frontmatter：`name` / `description` / `command-dispatch: tool` / `requires.bins: node`
-   - 触发条件：「启动光伏余热仿真」
-   - 四步执行流程：健康检查 → 下发任务 → 轮询 → 回报
-   - HTTP 契约表：`POST /v1/simulations`、`GET /v1/simulations/{id}`、`.../result`
-
-3. 安装并确认 OpenClaw 识别：
-
-   ```powershell
-   cd work/solarglyph-skill
-   node scripts/install-skill.cjs
-   node scripts/verify-skill.cjs        # 全绿
-   cd ../../upstream/openclaw-main
-   pnpm openclaw skills list | Select-String "solar"
-   ```
-
-   > 展示输出：`☀️ solar-glyph-simulation … openclaw-workspace`，状态 `✓ ready`，
-   > 且 Skill 总数从 57 变为 58。
-
-**本条要证明**：这是新增的、被框架正式加载的扩展，不是改上游源码。
+> 这份文档把每一个公式对照到原站点的具体位置，并明确标出哪些是复现、哪些是我们的自研扩展。
+> 开放成果包括：Skill 包、仿真服务源码、算法溯源文档、实测证据与部署说明。
 
 ---
 
-## 第 3 幕：全自动跑完仿真（约 120 秒，核心）
+## 3:30—4:00 ｜ 收尾：价值与边界
 
-**画面**：OpenClaw 网页控制台（`http://127.0.0.1:18789/`）+ 终端 A 的服务日志。
+**画面**：结果表定格 + 结束字幕卡。
 
-1. 在网页会话输入框敲入：
+**旁白**：
 
-   ```
-   启动光伏余热仿真
-   ```
-
-2. 观察并解说执行链（这是全片最关键的一段，建议放慢）：
-
-   - Skill 被命中 → agent 调用 `exec` 工具；
-   - 终端出现：`[solarglyph] submitted job <uuid>`；
-   - 终端逐条滚出真实轮询进度：
-     `loading-site-inputs 25%` → `transposing-irradiance 50%` →
-     `solving-pv-and-waste-heat 70%` → `aggregating-results 90%` → `succeeded 100%`；
-   - 网页里返回结果表：
-
-     ```
-     倾斜面年辐照量   1492.1 kWh/m²（相对水平面 +14.8%）
-     年发电量         499.5 万kWh（4995 MWh）
-     单位发电量       998.9 kWh/kWp·年
-     余热年回收热量    315.2 万kWh（11347 GJ）
-     ORC 年发电量     37.8 万kWh
-     年减排 CO₂       1776.4 t
-     ```
-
-3. 终端里旁证 HTTP 是真实发生的（服务端任务队列）：
-
-   ```powershell
-   node work/solarglyph-skill/scripts/run-simulation.cjs presets
-   curl.exe http://127.0.0.1:8787/v1/health
-   ```
-
-4. 追加一次「换参数」演示，证明是活的仿真而非硬编码：
-
-   ```
-   把容量的 5MW 换成 1MW，倾角改成 25 度，再跑一次
-   ```
-
-   或确定性入口：
-
-   ```powershell
-   node work/solarglyph-skill/scripts/trigger.cjs "西北高辐照 10MW"
-   ```
-
-5. 生成留档报告：
-
-   ```powershell
-   node work/solarglyph-skill/scripts/run-simulation.cjs run --preset industrial-rooftop-5mw --report demo.md
-   ```
-
-**本条要证明**：AI 下发 → 启动仿真 → 轮询状态 → 拿回结果，全自动闭环。
-
----
-
-## 第 4 幕：仓库与文档（约 90 秒）
-
-**画面**：git 客户端 / 终端。
-
-1. 展示分支与提交边界：
-
-   ```powershell
-   cd work/solarglyph-skill
-   git log --oneline --graph --all
-   git show --stat <SKILL 单独提交的 SHA>
-   ```
-
-   > 解说：Skill 与仿真服务是**单独的分支、单独的提交**，与上游快照完全分离。
-
-2. 展示 `README.md` 的「仓库结构」一节：上游 `upstream/` vs 自研 `work/solarglyph-skill/`。
-
-3. 展示 `docs/solarglyph-algorithm-provenance.md`：
-   逐条公式对照表 + 站点行号 + 哪些是自研扩展（余热回收模块）。
-
-4. 展示代码统计，量化自研规模：
-
-   ```powershell
-   (Get-ChildItem work\solarglyph-skill -Recurse -File -Include *.js,*.cjs,*.md | Measure-Object -Property Length -Sum).Sum / 1KB
-   ```
-
-**本条要证明**：代码归属清楚、可核查、可复现。
-
----
-
-## 第 5 幕：收尾（约 30 秒）
-
-1. 回到仿真结果，说明工程价值：余热回收让同一个项目多出
-   **37.8 万 kWh/年 ORC 发电 + 267.9 万 kWh/年 可用供热**，年减排 1776 吨 CO₂。
-2. 说明边界与诚实性：辐照数据为区域年值 + 几何近似，不是 8760 气象逐时模拟；
-   结果用于方案比选，署名算法来源与自研扩展范围。
+> 以这个 5 兆瓦项目为例：年发电 499.5 万度，余热年回收 315.2 万度，
+> 其中 ORC 发电 37.8 万度，年减排二氧化碳 1776 吨。
+> 一个原本要人工核算数天的方案评估，现在一句指令就能拿到可复现的结果。
+>
+> 我们也如实说明边界：辐照数据采用区域年值加几何近似，不是 8760 小时逐时气象模拟；
+> 结果用于方案比选，不替代正式的可行性研究。这些限制都写在技术报告里。
 
 ---
 
 ## 录制检查清单
 
-- [ ] 终端字号放大到 16–18pt，确保录屏可读
-- [ ] 三条命令提前在历史里，避免现场手打
-- [ ] 第 3 幕开始时先清屏，保证「提交 → 轮询 → 结果」连续可见
-- [ ] 全程不要出现真实 API key、令牌或个人信息
-- [ ] 结尾定格在结果表与 `verify-skill.cjs` 全绿画面
+- [ ] 成片时长落在 **3:00—5:00** 之间（建议 4:00 左右）
+- [ ] 导出 **MP4**，体积 **≤ 300 MB**
+- [ ] 全片无**学校名称、LOGO、指导教师信息**
+- [ ] 无 API 密钥、账号密码等凭据出现在画面里
+- [ ] 第 3 段（核心演示）连续可见，不要剪断轮询过程
+- [ ] 结尾定格在结果表 + `verify-skill.cjs` 全绿画面
