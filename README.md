@@ -267,34 +267,59 @@ ORC 年发电量      37.8 万kWh
 
 ---
 
-## 七、推送到你自己的 fork
+## 七、推送到你自己的 GitHub 仓库
 
-本仓库已完成本地 git 初始化与分支划分，但**尚未推送到 GitHub**
-（推送需要你自己的账号凭据）。按下面步骤建立可提交的线上仓库：
+本仓库已完成本地 git 初始化与分支划分，但**尚未推送到 GitHub**：
+构建本仓库的开发环境无法通过 TLS 直连 github.com（详见本节末尾），
+推送需要在你自己的机器上用你自己的账号完成。
+
+### 推荐方式：用随附的 bundle 克隆后推送
+
+随仓库提供了 `openclaw-solarglyph.bundle`，包含两个分支与全部 15 次提交历史。
+在能访问 GitHub 的机器上执行：
 
 ```bash
-# 1) 在 GitHub 网页上 fork 官方仓库（无需本地操作）
-#    https://github.com/openclaw/openclaw → Fork
+# 1) 从 bundle 克隆（含完整历史与工作树）
+git clone -b feature/solar-glyph-simulation openclaw-solarglyph.bundle openclaw-solarglyph
+cd openclaw-solarglyph
 
-# 2) 把 fork 添加为远端并推送
-cd work/solarglyph-skill
-git remote add origin https://github.com/<你的账号>/openclaw.git
+# 2) 在 GitHub 上新建一个空仓库（不要勾选自动生成 README），然后：
+node scripts/push-to-github.cjs https://github.com/<你的账号>/<仓库名>.git
+```
+
+`push-to-github.cjs` 会检查工作树是否干净、设置 `origin`、依次推送 `main` 与
+`feature/solar-glyph-simulation`，并打印后续步骤。
+
+### 手动方式
+
+```bash
+git remote add origin https://github.com/<你的账号>/<仓库名>.git
 git push -u origin main
 git push -u origin feature/solar-glyph-simulation
-
-# 3) 保留上游连接，便于评委核对血缘
-git remote add upstream https://github.com/openclaw/openclaw.git
-git fetch upstream
 ```
 
-提交前建议核对：
+### 推送后建议
 
 ```bash
-git log --oneline --graph --all      # 分支与提交边界
-git show --stat 18f5381              # Skill 的单独提交
+# 保留上游连接，便于评委核对血缘（本仓库扩展自哪个项目）
+git remote add upstream https://github.com/openclaw/openclaw.git
+git fetch upstream
+
+# 核对分支与提交边界
+git log --oneline --graph --all
+git show --stat 18f53817        # Skill 的单独提交
 ```
 
-> 本环境原生 TLS 受限，`git push` 无法在此执行；请在本机或 CI 环境推送。
+并把仓库链接填进 `docs/technical-report.md` 的**附录 2**，然后重新生成报告：
+
+```bash
+npm run report
+```
+
+> **为什么这里推不了**：构建环境对 github.com:443 的直接 TLS 握手被重置
+> （`git clone`/`push` 报 `unexpected eof while reading` 或连接超时），
+> 而 git 协议无法经由环境对 Node 开放的 HTTP 通道转发。
+> 该限制只影响推送动作，不影响仓库内容与历史完整性。
 > 若你的 fork 已有完整上游历史，用
 > `git rebase --onto upstream/main 38ac45bc feature/solar-glyph-simulation`
 > 把自研提交重放到真实上游历史之上，即可得到与官方仓库同源的干净分支。

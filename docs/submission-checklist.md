@@ -30,7 +30,19 @@
 | 5 | 开源及第三方资源使用清单 | 作为技术报告**附件**提交；字段见 §四 | ✅ 已按官方列重排，见报告**附录 1** |
 | 6 | 答辩 PPT | **仅晋级总决赛**需提交，PDF | ⏸ 初赛不必 |
 | 7 | 佐证材料 | 可选 | ✅ 报告附录 3 已含实测记录；仓库含完整证据 |
-| 8 | 成果链接 | 代码/程序包等放在代码托管平台或网盘，提供**评审期内持续有效**的访问链接；需运行环境的要附安装部署说明 | ⚠️ 仓库已就绪（提交历史完整），**仍未推送到 GitHub** |
+| 8 | 成果链接 | 代码/程序包等放在代码托管平台或网盘，提供**评审期内持续有效**的访问链接；需运行环境的要附安装部署说明 | ⏳ 仓库与历史已就绪，`openclaw-solarglyph.bundle` 与推送助手已备好；**只差你执行推送**（步骤见 `README.md` 第七节） |
+
+### 推送仓库（唯一需要你动手的网络操作）
+
+构建环境无法通过 TLS 直连 github.com，因此推送必须在你自己能访问 GitHub 的机器上完成：
+
+```bash
+git clone -b feature/solar-glyph-simulation openclaw-solarglyph.bundle openclaw-solarglyph
+cd openclaw-solarglyph
+node scripts/push-to-github.cjs https://github.com/<你的账号>/<仓库名>.git
+```
+
+推送后把链接填进 `docs/technical-report.md` 的**附录 2**，再执行 `npm run report` 重新生成报告。
 
 ### 技术报告可随时重新生成
 
