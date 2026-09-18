@@ -413,7 +413,7 @@ ORC 年发电量     37.8 万kWh
 </tbody></table>
 <blockquote><p>说明：清单按竞赛大纲参考表的字段填写。"合规状态"为团队自查结论；如组委会要求补充授权证明，将按要求提供。</p></blockquote>
 <h3>附录 2：代码仓库与运行说明</h3>
-<ul><li><strong>代码仓库</strong>：（待填，评审期内持续有效）</li><li><strong>运行环境</strong>：Node.js 24.16+ 或 26.1+；pnpm 12.3.4（仅上游需要）</li><li><strong>最小运行方式</strong>（不装智能体也可跑通仿真）：</li></ul>
+<ul><li><strong>代码仓库</strong>：https://github.com/uberjl136/openclaw-solarglyph （公开可访问，评审期内持续有效）</li><li>默认分支 <code>main</code>：仿真服务、算法溯源、扩展报告</li><li>开发分支 <code>feature/solar-glyph-simulation</code>：<strong>Skill 单独提交</strong>、工具链、README、技术报告</li><li>上游原版快照原样保留于 <code>upstream/openclaw-main/</code>，未修改任何一行源码</li><li><strong>运行环境</strong>：Node.js 24.16+ 或 26.1+；pnpm 12.3.4（仅上游需要）</li><li><strong>最小运行方式</strong>（不装智能体也可跑通仿真）：</li></ul>
 <pre class="code lang-bash"><code>cd work/solarglyph-skill
 node solarglyph-core/server.js                       # 启动仿真服务
 node scripts/run-simulation.cjs run --preset industrial-rooftop-5mw</code></pre>

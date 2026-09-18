@@ -479,7 +479,10 @@ ORC 年发电量     37.8 万kWh
 
 ### 附录 2：代码仓库与运行说明
 
-- **代码仓库**：（待填，评审期内持续有效）
+- **代码仓库**：https://github.com/uberjl136/openclaw-solarglyph （公开可访问，评审期内持续有效）
+  - 默认分支 `main`：仿真服务、算法溯源、扩展报告
+  - 开发分支 `feature/solar-glyph-simulation`：**Skill 单独提交**、工具链、README、技术报告
+  - 上游原版快照原样保留于 `upstream/openclaw-main/`，未修改任何一行源码
 - **运行环境**：Node.js 24.16+ 或 26.1+；pnpm 12.3.4（仅上游需要）
 - **最小运行方式**（不装智能体也可跑通仿真）：
 
