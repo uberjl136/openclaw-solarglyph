@@ -22,14 +22,26 @@ node solarglyph-core/server.js
 
 看到 `listening on http://127.0.0.1:8787` 即成功。
 
-**终端 B —— 仓库目录（后面跑命令用）**
+**终端 B —— 主操作窗口（录视频就在它里面操作）**
+
+**先打这两行"设定规则"，只在这个窗口有效，打完屏幕不会有任何提示，这是正常的：**
 
 ```powershell
-cd "$env:USERPROFILE\Desktop\DS Harness\work\solarglyph-skill"
-# 本次录制需要的环境变量，先设好
+# 第 1 行：告诉系统"我们的东西装在项目文件夹里，不要在别处找"
 $env:OPENCLAW_STATE_DIR = "$env:USERPROFILE\Desktop\DS Harness\work\openclaw-state"
+
+# 第 2 行：把项目里的 pnpm 工具加进路径（否则 pnpm 会提示"无法识别"）
 $env:PATH = "$env:USERPROFILE\Desktop\DS Harness\tools\npm-global;$env:PATH"
+
+# 第 3 行：进入项目文件夹
+cd "$env:USERPROFILE\Desktop\DS Harness\work\solarglyph-skill"
 ```
+
+> **这两行是必需的，不是可选的。** 少了第 1 行，卸载/安装会提示
+> `is not installed ... nothing to do`（因为它在默认目录里找不到我们的东西）；
+> 少了第 2 行，`pnpm` 会提示"无法将 pnpm 项识别为 cmdlet"。
+>
+> **它们只在当前窗口有效**，关掉窗口就要重新打。所以录制全程**用同一个终端 B 窗口，不要关**。
 
 > **重要**：终端 A 必须**保持开着**，它是仿真服务。关掉它，镜头 3 会报
 > `The SolarGlyph simulation service is not reachable`。这个报错本身很清晰，
@@ -117,19 +129,20 @@ cd "$env:USERPROFILE\Desktop\DS Harness\work\solarglyph-skill"
 node scripts/uninstall-skill.cjs
 ```
 
+画面应显示 `removed skill "solar-glyph-simulation"`。
+若显示 `is not installed ... nothing to do`，说明终端 B 开头的
+`OPENCLAW_STATE_DIR` 没设（或换了新窗口），回到第一步重设即可。
+
 **第 2 步——列出上游能力**
 
 ```powershell
-$env:OPENCLAW_STATE_DIR = "$env:USERPROFILE\Desktop\DS Harness\work\openclaw-state"
-$env:PATH = "$env:USERPROFILE\Desktop\DS Harness\tools\npm-global;$env:PATH"
 cd "$env:USERPROFILE\Desktop\DS Harness\upstream\openclaw-main"
-pnpm openclaw skills list | Select-String "Skills \(|1password|weather|github|notion|summarize"
+pnpm openclaw skills list | Select-String "Skills \("
 ```
 
 画面应显示 **`Skills (21/57 ready)`**，且**看不到** `solar-glyph-simulation` —— 这就是上游原版。
 
-> **注意**：`OPENCLAW_STATE_DIR` 必须设对，否则读到的是默认目录，卸载/复装都作用不到同一处。
-> 录完镜头 1 记得复装（见镜头 2 末尾），否则后面镜头 4 会看不到我们的 Skill。
+> 录完镜头 1 记得复装（见镜头 2），否则后面镜头 4 会看不到我们的 Skill。
 
 **旁白**：
 
