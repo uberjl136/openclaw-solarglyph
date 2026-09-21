@@ -13,6 +13,9 @@
     "test:e2e": "node e2e-http.cjs",
     "sync-skill": "node scripts/sync-skill.cjs",
     "verify-skill": "node scripts/verify-skill.cjs",
+    "test:model": "node scripts/test-model-driven.cjs",
+    "stats": "node scripts/stats.cjs",
+    "report": "node scripts/report/build-report.cjs",
     "check": "node scripts/verify-skill.cjs && node smoke.cjs"
   },
   "files": [
@@ -20,5 +23,8 @@
     "scripts",
     "skills",
     "docs"
-  ]
+  ],
+  "devDependencies": {
+    "pdfjs-dist": "^4.10.38"
+  }
 }

@@ -200,15 +200,25 @@ Skills (22/58 ready)
 
 安装前为 21/57，安装后为 22/58，来源标注 `openclaw-workspace`，状态 `✓ ready`。
 
-**⑤ OpenClaw 侧 Agent 回合** — `pnpm openclaw agent --local --message "启动光伏余热仿真" --json`
+**⑤ OpenClaw 侧 Agent 回合（模型驱动闭环）**
 
-```
-executionTrace.winnerProvider = qa-mock
-executionTrace.winnerModel    = gpt-5.6-luna
-stopReason                    = stop
+在精简配置下（`tools.allow: ["read","exec"]`、`toolSearch: false`、
+`skipBootstrap: true`、`contextInjection: "never"`），本地 **8B 模型**成功调用 `exec`
+并完成仿真。服务端任务历史（非模型自述）为直接证据：
+
+| 本地时间 | job id | 说明 |
+| --- | --- | --- |
+| 16:18:06 | `3daec0ca` | 8B 模型 agent 回合提交 |
+| 18:00:29 | `47d19f56` | 自然语言触发提交 |
+| 18:03:31 / 18:05:41 / 18:07:10 / 18:10:35 / 18:11:22 | 5 个任务 | 模型驱动复测连续提交 |
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8787/v1/simulations?limit=30 |
+  Select-Object -ExpandProperty jobs | Format-Table createdAt,status,presetId
 ```
 
-证明 Skill 所处的 OpenClaw 链路（Skill 注入 → agent 回合 → 工具面）可实际运行。
+模型回合记录中 `successfulToolNames: ["exec"]`。据此，**自然语言触发（模型驱动）与确定性调度
+（`command-dispatch: tool`）两条入口均已跑通**；后者不依赖模型，最适合演示与离线环境。
 
 ### 5.3 诚实声明的边界
 
@@ -220,6 +230,7 @@ stopReason                    = stop
 | 阴影、积灰、衰减、逆变器效率曲线 | 未建模，以固定系统损失系数 + 温度修正代替 |
 | 余热参数 | 工程师经验取值，实际项目应替换为实测数据 |
 | 结果用途 | 方案比选与量级判断，不替代正式可行性研究的发电量计算 |
+| 小模型模型驱动 | 需精简配置（见 §5.2 ⑤）；指令越明确成功率越高，纯触发词不足以稳定驱动 |
 | 本环境限制 | 原生 TLS 受限（`git clone`/`curl` 不可用）与子进程管道 stdio 受限，已用 Node 下载/解包与 `--foreground-scripts` 绕过，详见 `docs/deployment.md` |
 
 ---
