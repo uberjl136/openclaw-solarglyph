@@ -147,7 +147,7 @@ trello  visualize  weather  xurl  ...
 | 安装/同步/校验脚本 | `scripts/install-skill.cjs`、`sync-skill.cjs`、`verify-skill.cjs` |
 | 算法溯源 | `docs/solarglyph-algorithm-provenance.md` |
 | 部署说明 | `docs/deployment.md` |
-| 演示脚本 | `docs/demo-video-script.md` |
+| 演示脚本 | `docs/recording-web-ui.md` |
 | 开源登记 | `docs/opensource-inventory.md` |
 
 ### 5.2 验证证据

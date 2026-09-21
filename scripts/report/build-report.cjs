@@ -21,7 +21,13 @@ const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const SRC_MD = path.join(ROOT, 'docs', 'technical-report.md');
-const OUT_DIR = path.join(ROOT, 'deliverables');
+
+// Output goes outside the repository on purpose: the built PDF is a submission
+// artifact, and committing multi-hundred-KB binaries to the repo adds churn
+// without helping a reviewer read the source. Override with REPORT_OUT_DIR.
+const OUT_DIR = process.env.REPORT_OUT_DIR
+  ? path.resolve(process.env.REPORT_OUT_DIR)
+  : path.resolve(ROOT, '..', 'aic-req');
 const OUT_HTML = path.join(OUT_DIR, '技术报告.html');
 const OUT_PDF = path.join(OUT_DIR, '技术报告.pdf');
 

@@ -32,7 +32,7 @@ ls upstream/openclaw-main/skills
 
 加载本 Skill 之前，问它「这个 5MW 厂区屋顶光伏一年发多少电」，它只能给出泛泛的定性回答，
 拿不到可核对的工程数字；加载之后，它会真正调用仿真服务跑出结果。
-这一对比就是[演示视频](docs/demo-video-script.md)的第一幕。
+这一对比就是[演示视频](docs/recording-web-ui.md)的第一幕。
 
 ---
 
