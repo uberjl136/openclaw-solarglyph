@@ -14,9 +14,9 @@
 
 | 改进 | 内容 | 核验位置 |
 | --- | --- | --- |
-| ① 新增垂直场景 Skill | `solar-glyph-simulation`：定义触发词、四步执行流程、HTTP 契约、参数表 | `work/solarglyph-skill/skills/solar-glyph-simulation/SKILL.md` |
-| ② 新增仿真服务 | SolarGlyph 工程算法服务化：光伏发电 + 工业余热回收，提供真实的 提交/轮询/取结果 HTTP API | `work/solarglyph-skill/solarglyph-core/` |
-| ③ 打通端到端链路 | AI 指令 → HTTP 下发 → 轮询 → 结果回传，全自动跑通 | 见[实测证据](#六实测证据) |
+| ① 新增垂直场景 Skill | `solar-glyph-simulation`：定义触发词、四步执行流程、HTTP 契约、参数表 | `skills/solar-glyph-simulation/SKILL.md` |
+| ② 新增仿真服务 | SolarGlyph 工程算法服务化：光伏发电 + 工业余热回收，提供真实的 提交/轮询/取结果 HTTP API | `solarglyph-core/` |
+| ③ 打通端到端链路 | AI 指令 → HTTP 下发 → 轮询 → 结果回传，全自动跑通 | 见[实测证据](#六实测证据) 与 [`docs/evidence/`](docs/evidence/) |
 
 **上游 OpenClaw 底层源码未做任何修改**（唯一例外是仓库根目录新增本 Skill，以及 `CLAUDE.md` 类符号链接无法在 Windows 落地，详见[§5.3](#53-windows-平台的已知差异)）。
 
@@ -39,26 +39,26 @@ ls upstream/openclaw-main/skills
 ## 二、仓库结构
 
 ```
-DS Harness/
+openclaw-solarglyph/                 ← 本仓库根目录
 ├── upstream/openclaw-main/          ← 上游原版 OpenClaw（通用 AI 智能体底座，未改源码）
 │   ├── src/  extensions/  packages/  ui/  docs/
 │   └── skills/                      ← 上游内置的 50 个通用 Skill（无新能源能力）
 │
-└── work/solarglyph-skill/           ← 本团队自研部分（独立 git 仓库）
-    ├── skills/solar-glyph-simulation/   ← ★ 可安装的 Skill 包
-    │   ├── SKILL.md                     ← 触发逻辑 + 执行流程 + HTTP 契约
-    │   ├── scripts/run-simulation.cjs   ← Skill ↔ 仿真服务的桥接 CLI
-    │   └── solarglyph-core/             ← 随包携带的仿真算力（自包含）
-    ├── solarglyph-core/                 ← 仿真服务源码（权威副本）
-    │   ├── engine.js                    ← 光伏/余热工程模型
-    │   ├── presets.js                   ← 场景预设与热源库
-    │   └── server.js                    ← HTTP 任务队列服务
-    ├── scripts/                         ← 安装、同步、校验脚本
-    └── docs/                            ← 算法溯源、部署、演示与报告
+├── skills/solar-glyph-simulation/   ← ★ 可安装的 Skill 包
+│   ├── SKILL.md                     ← 触发逻辑 + 执行流程 + HTTP 契约
+│   ├── scripts/run-simulation.cjs   ← Skill ↔ 仿真服务的桥接 CLI
+│   └── solarglyph-core/             ← 随包携带的仿真算力（自包含）
+├── solarglyph-core/                 ← 仿真服务源码（权威副本，供安装/自检参照）
+│   ├── engine.js                    ← 光伏/余热工程模型
+│   ├── presets.js                   ← 场景预设与热源库
+│   └── server.js                    ← HTTP 任务队列服务
+├── scripts/                         ← 安装、同步、校验脚本
+└── docs/                            ← 算法溯源、部署、佐证材料与报告
 ```
 
-**上游 vs 自研 的判定线**：`upstream/` 下所有文件来自官方仓库快照，只读不改；
-`work/solarglyph-skill/` 下所有文件为本团队原创，单独成库、单独提交。
+**上游 vs 自研 的判定线**：`upstream/` 下所有文件来自官方仓库快照，只读不改
+（`git log --oneline -- upstream/` 只有一个导入提交）；
+其余目录为本团队原创，单独提交。
 
 ---
 
@@ -77,7 +77,7 @@ DS Harness/
 ### 3.2 跑通仿真服务（30 秒）
 
 ```bash
-cd work/solarglyph-skill
+# 在仓库根目录执行
 node solarglyph-core/server.js          # 监听 127.0.0.1:8787
 ```
 
@@ -97,12 +97,12 @@ node scripts/run-simulation.cjs run --preset industrial-rooftop-5mw --report out
 cd upstream/openclaw-main
 pnpm install --frozen-lockfile
 
-# 2) 把 Skill 安装进 OpenClaw workspace
-cd ../../work/solarglyph-skill
+# 2) 回到仓库根目录，把 Skill 安装进 OpenClaw workspace
+cd ../..
 node scripts/install-skill.cjs
 
 # 3) 启动 Gateway 并在浏览器打开控制台
-cd ../../upstream/openclaw-main
+cd upstream/openclaw-main
 pnpm openclaw gateway          # 控制台默认 http://127.0.0.1:18789/
 ```
 
@@ -142,24 +142,27 @@ ollama pull qwen3:4b                  # 建议 4B 以上，小模型难以稳定
 ### 3.4 一键自检
 
 ```bash
-cd work/solarglyph-skill
-node scripts/verify-skill.cjs    # Skill 包完整性、自包含性、确定性、触发链路
+# 在仓库根目录执行
+node scripts/verify-skill.cjs    # 7 项：包完整性、自包含、确定性、触发链路（需服务在线）
 node smoke.cjs                   # 四套预设场景全部跑通
-# 需要服务在线时：
 node e2e-http.cjs                # 提交 → 轮询 → 取结果 全链路
 
 # 模型驱动路径复测（需一个能力足够的模型）
-node scripts/test-model-driven.mjs --model ollama/qwen3:8b
+node scripts/test-model-driven.cjs --model <provider/model>
 ```
 
-> **关于触发方式**：两条入口共用同一个 CLI，都已实测跑通。
+> **关于两条入口的实测结论**（如实记录）：
 >
 > | 入口 | 机制 | 实测状态 |
 > | --- | --- | --- |
-> | `/solar-glyph-simulation` 或 `trigger.cjs` | `command-dispatch: tool` 确定性调度，绕过模型 | **闭环**（离线可用，最可靠） |
-> | 自然语言「启动光伏余热仿真」 | 模型读取 SKILL.md 后调用 `exec` | **闭环**，但需下面的精简配置；可靠性随模型规模变化 |
+> | `node scripts/trigger.cjs "启动光伏余热仿真"` | 本地脚本按触发词映射场景，直接走 HTTP 接口 | **始终可用**，结果确定、可复现 |
+> | 网页对话框输入「启动光伏余热仿真」 | 模型读 SKILL.md 后自行调用 `exec` | **已验证可用**（DeepSeek V4 Pro，18–20 秒跑完）；**本地 7B–8B 模型不稳定** |
 >
-> 让本地小模型也能跑通的精简配置（本机 8B 模型据此成功调用 `exec` 并产出仿真结果）：
+> 网页这条路要求模型能完成工具编排。我们用本地 Ollama 的 1.5B/4B/8B 反复试过，
+> 它们会反问"请提供命令名"而不去调用工具；换成云端模型后一次通过。
+> 因此**演示与评审建议配一个能力足够的模型**，或直接使用上面的 `trigger.cjs` 入口。
+>
+> 若坚持用本地模型，可缩小工具面来降低编排难度（把工具 schema 从约 66 KB 降到约 2.6 KB）：
 >
 > ```json5
 > {
@@ -168,11 +171,10 @@ node scripts/test-model-driven.mjs --model ollama/qwen3:8b
 > }
 > ```
 >
-> 原因：默认系统提示里的工具 schema 约 66 KB，加上工作区引导文件会把小模型的注意力带偏；
-> 收窄到 `read`+`exec` 后降到约 2.6 KB，模型即可正确调用。
-> 一键复测：`node scripts/test-model-driven.cjs --model ollama/qwen3:8b`。
+> 这只是提高成功率，**不能保证**小模型在网页对话里稳定编排。
 > 完整测试矩阵与服务端任务历史证据见
-> [`docs/verification-evidence.md`](docs/verification-evidence.md) §2。
+> [`docs/verification-evidence.md`](docs/verification-evidence.md)，
+> 网页路径的截图与日志见 [`docs/evidence/`](docs/evidence/)。
 
 ---
 
@@ -233,22 +235,24 @@ pnpm openclaw --help                # 其他子命令
 ### 5.3 Windows 平台的已知差异
 
 上游仓库含 26 个指向仓库外的**符号链接**（`CLAUDE.md`、`.claude/skills`、一个 Swift fixture）。
-Windows 上创建符号链接需要额外权限，本快照中这些链接被跳过，完整清单见
-`work/reports/upstream-extract.json`。它们全部是 AI 助手指令/软链接转发文件，**不参与运行时代码路径**，
+Windows 上创建符号链接需要额外权限，本快照中这些链接被跳过：
+`git ls-files upstream/ | wc -l` 可核对文件数，与上游 `ad1c934` 相比少 26 项。
+它们全部是 AI 助手指令/软链接转发文件，**不参与运行时代码路径**，
 因此不影响 Gateway 启动与 Skill 加载。在 macOS/Linux 上按官方方式 `git clone` 可获得完整文件集。
 
 ---
 
 ## 六、实测证据
 
-以下命令均在 Windows + Node v24.21.0 上实际执行并留存输出：
+以下命令均在 Windows 11 + Node v24.21.0 上实际执行并留存输出：
 
 | 验证项 | 命令 | 结果 |
 | --- | --- | --- |
-| Skill 包完整性 | `node scripts/verify-skill.cjs` | 5/5 通过（frontmatter、字节一致、自包含、确定性、CLI 退出码） |
+| Skill 包完整性 | `node scripts/verify-skill.cjs` | **7/7 通过**（frontmatter、字节一致、自包含、确定性、未知请求拒绝、未知命令拒绝、在线端到端） |
 | 仿真引擎 | `node smoke.cjs` | 4 套预设全部产出合理量级结果 |
 | HTTP 全链路 | `node e2e-http.cjs` | `202 → running(5%→25%→50%→70%→90%) → succeeded`，结果回取成功 |
 | 错误处理 | 同上 | 非法容量返回 `422`，未知任务返回 `404` |
+| 网页对话触发 | 控制台输入「启动光伏余热仿真」 | 模型自主调用工具并跑完，服务端留痕任务 `6c86a36f` |
 
 关键指标示例（`industrial-rooftop-5mw` 预设）：
 
@@ -262,67 +266,40 @@ ORC 年发电量      37.8 万kWh
 年减排 CO₂        1776.4 t
 ```
 
-详细日志与截图见 `docs/`。完整的实测记录、测试矩阵与**未通过项**见
-[`docs/verification-evidence.md`](docs/verification-evidence.md)。
+**完整佐证材料见 [`docs/evidence/`](docs/evidence/)**：测试记录、5 张真实截图、
+原始日志、仓库与提交核实记录，以及评审方 5 分钟自行核验的方法。
+另见 [`docs/verification-evidence.md`](docs/verification-evidence.md)（含**未通过项**的如实记录）。
 
 ---
 
-## 七、推送到你自己的 GitHub 仓库
+## 七、仓库已公开
 
-本仓库已完成本地 git 初始化与分支划分，但**尚未推送到 GitHub**：
-构建本仓库的开发环境无法通过 TLS 直连 github.com（详见本节末尾），
-推送需要在你自己的机器上用你自己的账号完成。
+本仓库已发布：**<https://github.com/uberjl136/openclaw-solarglyph>**（public，默认分支 `main`）。
 
-### 推荐方式：用随附的 bundle 克隆后推送
-
-随仓库提供了 `openclaw-solarglyph.bundle`，包含两个分支与全部 15 次提交历史。
-在能访问 GitHub 的机器上执行：
+评审需要的核对命令：
 
 ```bash
-# 1) 从 bundle 克隆（含完整历史与工作树）
-git clone -b feature/solar-glyph-simulation openclaw-solarglyph.bundle openclaw-solarglyph
-cd openclaw-solarglyph
+# 上游只被导入一次，之后零修改
+git log --oneline -- upstream/
 
-# 2) 在 GitHub 上新建一个空仓库（不要勾选自动生成 README），然后：
-node scripts/push-to-github.cjs https://github.com/<你的账号>/<仓库名>.git
+# Skill 的单独提交
+git show --stat 18f53817
+
+# 分支边界
+git log --oneline --graph --all -20
 ```
 
-`push-to-github.cjs` 会检查工作树是否干净、设置 `origin`、依次推送 `main` 与
-`feature/solar-glyph-simulation`，并打印后续步骤。
-
-### 手动方式
+如需在自己的账号下另建一份副本（例如二次开发）：
 
 ```bash
-git remote add origin https://github.com/<你的账号>/<仓库名>.git
+git clone https://github.com/uberjl136/openclaw-solarglyph
+cd openclaw-solarglyph
+git remote set-url origin https://github.com/<你的账号>/<仓库名>.git
 git push -u origin main
 git push -u origin feature/solar-glyph-simulation
 ```
 
-### 推送后建议
-
-```bash
-# 保留上游连接，便于评委核对血缘（本仓库扩展自哪个项目）
-git remote add upstream https://github.com/openclaw/openclaw.git
-git fetch upstream
-
-# 核对分支与提交边界
-git log --oneline --graph --all
-git show --stat 18f53817        # Skill 的单独提交
-```
-
-并把仓库链接填进 `docs/technical-report.md` 的**附录 2**，然后重新生成报告：
-
-```bash
-npm run report
-```
-
-> **为什么这里推不了**：构建环境对 github.com:443 的直接 TLS 握手被重置
-> （`git clone`/`push` 报 `unexpected eof while reading` 或连接超时），
-> 而 git 协议无法经由环境对 Node 开放的 HTTP 通道转发。
-> 该限制只影响推送动作，不影响仓库内容与历史完整性。
-> 若你的 fork 已有完整上游历史，用
-> `git rebase --onto upstream/main 38ac45bc feature/solar-glyph-simulation`
-> 把自研提交重放到真实上游历史之上，即可得到与官方仓库同源的干净分支。
+> 仓库内含 4 万余个上游快照文件，首次克隆约 155 MB。
 
 ---
 
@@ -333,7 +310,7 @@ npm run report
   全文见 `upstream/openclaw-main/LICENSE`）。上游仓库：
   <https://github.com/openclaw/openclaw>，快照提交 `ad1c9345f2cbbeee32fc006b963da86001bffbaa`
   （2026-09-16，`main`，版本 `2026.9.4`）。
-- **本团队自研部分**（`work/solarglyph-skill/**`）：MIT，见 `LICENSE`。
+- **本团队自研部分**（`skills/`、`solarglyph-core/`、`scripts/`、`docs/`）：MIT，见 `LICENSE`。
 - **算法来源**：光伏/辐照/储热/电气公式逆向自 SolarGlyph 工程站点打包产物，
   逐条对照见 `docs/solarglyph-algorithm-provenance.md`；余热回收模块为本团队原创。
 - **上游快照获取方式**：本环境原生 TLS 受限，无法直接 `git clone`，改用

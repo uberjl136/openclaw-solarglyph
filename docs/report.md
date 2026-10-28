@@ -8,7 +8,7 @@
 | 上游仓库 | <https://github.com/openclaw/openclaw> |
 | 快照提交 | `ad1c9345f2cbbeee32fc006b963da86001bffbaa`（`main`，2026-09-16） |
 | 我方扩展 | Skill `solar-glyph-simulation` + 自研 SolarGlyph 光伏-余热仿真服务 |
-| 扩展位置 | `work/solarglyph-skill/`（独立 git 仓库、独立开发分支） |
+| 扩展位置 | 本仓库根目录（`skills/`、`solarglyph-core/`、`scripts/`、`docs/`） |
 | 上游源码改动 | **无**（仅为快照；26 个指向仓库外的符号链接在 Windows 下跳过，见 §5.3） |
 | 闭环能力 | AI 下发任务 → 启动仿真 → 轮询状态 → 取回结果 → 产出报告 |
 

@@ -12,7 +12,7 @@
 | 开源许可证 | **MIT License**，Copyright (c) 2026 OpenClaw Foundation（全文见 `upstream/openclaw-main/LICENSE`） |
 | 使用方式 | 本地部署运行；**未修改其底层源码** |
 | 我方扩展 | 新增垂直场景 Skill `solar-glyph-simulation`，通过 HTTP 对接自研 SolarGlyph 光伏-余热仿真服务 |
-| 扩展代码位置 | `work/solarglyph-skill/`（独立 git 仓库与开发分支） |
+| 扩展代码位置 | 本仓库根目录（`skills/`、`solarglyph-core/`、`scripts/`、`docs/`） |
 | 部署说明 | 见本仓库 `README.md` 与 `docs/deployment.md` |
 
 ## 说明文字（用于报告正文）

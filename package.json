@@ -11,6 +11,8 @@
     "start": "node solarglyph-core/server.js",
     "smoke": "node smoke.cjs",
     "test:e2e": "node e2e-http.cjs",
+    "install-skill": "node scripts/install-skill.cjs",
+    "uninstall-skill": "node scripts/uninstall-skill.cjs",
     "sync-skill": "node scripts/sync-skill.cjs",
     "verify-skill": "node scripts/verify-skill.cjs",
     "test:model": "node scripts/test-model-driven.cjs",

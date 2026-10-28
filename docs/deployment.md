@@ -85,7 +85,7 @@ pnpm openclaw gateway            # 启动 Gateway
    `tools/dl.mjs`（Node 下载）+ `tools/untar.mjs`（Node 解包）落地，而不是 `git clone`。
 2. **NTFS 保留文件名**：上游含 `CLAUDE.md` 等文件名，`tar.exe`/`Expand-Archive` 无法创建；
    Node 解包器按需跳过并记录 26 个条目（全部为指向仓库外的符号链接）。
-   完整清单见 `work/reports/upstream-extract.json`。
+   明细可通过 `git ls-files upstream/ | wc -l` 与上游 `ad1c934` 的文件数比对确认。
 3. **子进程管道 stdio 受限**：pnpm/npm 的 postinstall 若使用管道捕获输出会 `EPERM`；
    用 `--foreground-scripts`（继承 stdio）可绕过。esbuild 的 postinstall 自检在本环境失败，
    用 `pnpm install --ignore-scripts` 完成安装即可，运行期首次启动会自动构建。
@@ -130,7 +130,7 @@ node tools/dl.mjs \
 
 # 2) 解包（Node 版 tar 解包器，跳过 NTFS 保留名并输出报告）
 node tools/untar.mjs tools/_cache/openclaw-main.tar.gz upstream/openclaw-main \
-  work/reports/upstream-extract.json
+  （本快照跳过 26 个符号链接）
 ```
 
 在 TLS 正常的环境里，直接用官方方式即可获得完整历史：
