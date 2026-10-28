@@ -1,0 +1,16 @@
+﻿# 运行时间: 2026-10-28 20:48:47
+# 命令: node scripts/verify-skill.cjs
+# 说明: 第 7 项需要仿真服务在线
+
+SolarGlyph skill package verification
+────────────────────────────────────────────────────────
+  PASS  SKILL.md name=solar-glyph-simulation description=84 chars
+  PASS  5 runtime files byte-identical to sources
+  PASS  skill-local engine.js loads and exports runSimulation
+  PASS  engine output deterministic across runs
+  PASS  trigger.cjs rejects unknown requests with exit code 2
+  PASS  CLI rejects unknown commands with exit code 2
+  PASS  trigger.cjs ran "启动光伏余热仿真" end-to-end against the live service
+────────────────────────────────────────────────────────
+all 7 checks passed
+

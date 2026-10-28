@@ -1,0 +1,50 @@
+﻿# 运行时间: 2026-10-28 20:48:47
+# 命令: node smoke.cjs
+
+presets: industrial-rooftop-5mw, industrial-rooftop-1mw, high-irradiance-10mw, pv-thermal-storage-cooling
+
+[industrial-rooftop-5mw]
+  cap          : 5000 kWp
+  annual POA   : 1492.1 kWh/m2
+  generation   : 499.5 万kWh ( 4995 MWh )
+  specific     : 998.9 kWh/kWp
+  recovered ht : 315.2 万kWh / 11347 GJ
+  ORC elec     : 37.8 万kWh
+  CO2 avoided  : 1776.4 t/yr
+  peak-day AC  : 20250 kWh, peak 2517 kW, hours: 24
+  storage loss : 0.70 %/24h
+
+[industrial-rooftop-1mw]
+  cap          : 1000 kWp
+  annual POA   : 1672.3 kWh/m2
+  generation   : 109.2 万kWh ( 1092 MWh )
+  specific     : 1091.9 kWh/kWp
+  recovered ht : 117.6 万kWh / 4234 GJ
+  ORC elec     : 12.9 万kWh
+  CO2 avoided  : 621.9 t/yr
+  peak-day AC  : 4356 kWh, peak 540 kW, hours: 24
+  storage loss : 1.30 %/24h
+
+[high-irradiance-10mw]
+  cap          : 10000 kWp
+  annual POA   : 2188.5 kWh/m2
+  generation   : 1569.4 万kWh ( 15694 MWh )
+  specific     : 1569.4 kWh/kWp
+  recovered ht : 217.2 万kWh / 7821 GJ
+  ORC elec     : 30.4 万kWh
+  CO2 avoided  : 1287.5 t/yr
+  peak-day AC  : 58549 kWh, peak 7675 kW, hours: 24
+  storage loss : 0.46 %/24h
+
+[pv-thermal-storage-cooling]
+  cap          : 1200 kWp
+  annual POA   : 1337.7 kWh/m2
+  generation   : 150.0 万kWh ( 1500 MWh )
+  specific     : 1250.0 kWh/kWp
+  recovered ht : 43.1 万kWh / 1551 GJ
+  ORC elec     : 4.3 万kWh
+  CO2 avoided  : 212.8 t/yr
+  cooling cover: 100.0 %
+  peak-day AC  : 4427 kWh, peak 565 kW, hours: 24
+  storage loss : 0.83 %/24h
+

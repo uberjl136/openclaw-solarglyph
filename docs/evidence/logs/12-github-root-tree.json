@@ -1,0 +1,67 @@
+[
+  {
+    "name": ".gitattributes",
+    "type": "file",
+    "size": 544
+  },
+  {
+    "name": ".gitignore",
+    "type": "file",
+    "size": 636
+  },
+  {
+    "name": "LICENSE",
+    "type": "file",
+    "size": 1670
+  },
+  {
+    "name": "README.md",
+    "type": "file",
+    "size": 14490
+  },
+  {
+    "name": "docs",
+    "type": "dir",
+    "size": 0
+  },
+  {
+    "name": "e2e-http.cjs",
+    "type": "file",
+    "size": 3053
+  },
+  {
+    "name": "package-lock.json",
+    "type": "file",
+    "size": 9151
+  },
+  {
+    "name": "package.json",
+    "type": "file",
+    "size": 865
+  },
+  {
+    "name": "scripts",
+    "type": "dir",
+    "size": 0
+  },
+  {
+    "name": "skills",
+    "type": "dir",
+    "size": 0
+  },
+  {
+    "name": "smoke.cjs",
+    "type": "file",
+    "size": 1607
+  },
+  {
+    "name": "solarglyph-core",
+    "type": "dir",
+    "size": 0
+  },
+  {
+    "name": "upstream",
+    "type": "dir",
+    "size": 0
+  }
+]

@@ -1,0 +1,37 @@
+﻿# 运行时间: 2026-10-28 20:48:47
+# 命令: node e2e-http.cjs（对 127.0.0.1:8787 真实调用）
+
+health: ok | service: solarglyph-simulation | version: 1.0.0
+modules: solar-geometry, irradiance-transposition, pv-yield, waste-heat-recovery, thermal-storage, electrical
+
+--- submit ---
+HTTP 202 | Location: /v1/simulations/c1db62ef-a2bc-47f9-87cb-00b90d20f15a
+job id        : c1db62ef-a2bc-47f9-87cb-00b90d20f15a
+status/stage  : running / queued | progress: 0.05
+
+--- poll ---
+  t+0.4s  running   queued                       5%
+  t+0.8s  running   loading-site-inputs          25%
+  t+1.2s  running   transposing-irradiance       50%
+  t+1.6s  running   transposing-irradiance       50%
+  t+2.0s  running   solving-pv-and-waste-heat    70%
+  t+2.4s  running   solving-pv-and-waste-heat    70%
+  t+2.8s  running   aggregating-results          90%
+  t+3.2s  succeeded succeeded                    100%
+
+--- result ---
+duration          : 3106 ms
+PV capacity       : 5000 kWp
+annual generation : 499.5 万kWh
+specific yield    : 998.9 kWh/kWp
+recovered heat    : 315.2 万kWh
+ORC electricity   : 37.8 万kWh
+CO2 avoided       : 1776.4 t/yr
+combined useful   : 805.2 万kWh
+
+--- error handling ---
+invalid capacity -> HTTP 422 ["array.capacityKwp must be a positive number"]
+unknown job      -> HTTP 404
+
+VERDICT: end-to-end HTTP lifecycle OK
+

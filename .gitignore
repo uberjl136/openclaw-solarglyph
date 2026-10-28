@@ -19,6 +19,11 @@ runs/
 reports/local/
 demo-output/
 
+# ...except the evidence package, whose raw command output IS the deliverable.
+# These negations must come after the ignore rules above to take effect.
+!docs/evidence/logs/
+!docs/evidence/logs/**
+
 # Editor / OS noise
 .vscode/
 .idea/

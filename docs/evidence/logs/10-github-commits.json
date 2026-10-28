@@ -1,0 +1,242 @@
+[
+  {
+    "sha": "2f8e6e90",
+    "date": "2026-10-28T12:48:28Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "fix(core): restore the canonical service source the repo depends on"
+  },
+  {
+    "sha": "5f3fb308",
+    "date": "2026-10-25T08:41:41Z",
+    "author": "uberjl136",
+    "message": "Delete solarglyph-core directory"
+  },
+  {
+    "sha": "853893d3",
+    "date": "2026-10-25T08:37:01Z",
+    "author": "uberjl136",
+    "message": "Delete scripts/recording directory"
+  },
+  {
+    "sha": "40ebd317",
+    "date": "2026-10-25T08:35:16Z",
+    "author": "uberjl136",
+    "message": "Delete docs/submission-checklist.md"
+  },
+  {
+    "sha": "d277308c",
+    "date": "2026-10-25T08:34:38Z",
+    "author": "uberjl136",
+    "message": "Update solarglyph-algorithm-provenance.md"
+  },
+  {
+    "sha": "022e98d5",
+    "date": "2026-10-25T08:33:49Z",
+    "author": "uberjl136",
+    "message": "Delete docs/recording-web-ui.md"
+  },
+  {
+    "sha": "cae82d8a",
+    "date": "2026-10-25T08:33:28Z",
+    "author": "uberjl136",
+    "message": "Delete docs/recording-walkthrough.md"
+  },
+  {
+    "sha": "2761ac9d",
+    "date": "2026-10-25T08:30:21Z",
+    "author": "uberjl136",
+    "message": "Revise project introduction for clarity"
+  },
+  {
+    "sha": "4b71cdf8",
+    "date": "2026-09-22T13:29:40Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(competition): add the 300-character project summary"
+  },
+  {
+    "sha": "d52964af",
+    "date": "2026-09-21T12:38:48Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "fix(docs): repair mojibake in the submission checklist and drop dangling links"
+  },
+  {
+    "sha": "a0ee2da2",
+    "date": "2026-09-21T12:36:54Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "merge: take the repository owner's clean-up from the remote"
+  },
+  {
+    "sha": "48c8e8a1",
+    "date": "2026-09-21T12:26:43Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(video): the OpenClaw web path is now verified working"
+  },
+  {
+    "sha": "55e9de10",
+    "date": "2026-09-21T12:24:07Z",
+    "author": "uberjl136",
+    "message": "Delete deliverables/技术报告.html"
+  },
+  {
+    "sha": "438af16b",
+    "date": "2026-09-21T12:23:39Z",
+    "author": "uberjl136",
+    "message": "Delete deliverables/技术报告.pdf"
+  },
+  {
+    "sha": "0fed17e5",
+    "date": "2026-09-21T12:22:52Z",
+    "author": "uberjl136",
+    "message": "Delete docs/demo-video-script.md"
+  },
+  {
+    "sha": "416925b6",
+    "date": "2026-09-21T12:20:26Z",
+    "author": "uberjl136",
+    "message": "no need"
+  },
+  {
+    "sha": "0b1cc8e8",
+    "date": "2026-09-21T11:47:05Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(video): add a verified recording outline for the OpenClaw surface"
+  },
+  {
+    "sha": "8d01c557",
+    "date": "2026-09-21T10:52:44Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "merge: bring the full project onto main"
+  },
+  {
+    "sha": "52ba1cc8",
+    "date": "2026-09-18T09:50:22Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "chore(recording): add one-click shot runners for the demo video"
+  },
+  {
+    "sha": "dd4d7b6b",
+    "date": "2026-09-18T09:43:47Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(video): make the two required environment settings impossible to miss"
+  },
+  {
+    "sha": "150ba8bf",
+    "date": "2026-09-18T09:19:56Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(video): add a step-by-step recording walkthrough, plus skill uninstall"
+  },
+  {
+    "sha": "7e8305bd",
+    "date": "2026-09-18T09:11:46Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(checklist): mark the repository as published and fix the report size"
+  },
+  {
+    "sha": "02e34de0",
+    "date": "2026-09-18T09:05:48Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(report): fill in the published repository URL"
+  },
+  {
+    "sha": "bc894a81",
+    "date": "2026-09-18T07:56:08Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "fix(scripts): materialise missing branches before pushing from a bundle"
+  },
+  {
+    "sha": "035be6f5",
+    "date": "2026-09-18T07:55:27Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs: point the publish steps at the shipped bundle"
+  },
+  {
+    "sha": "8f43a61c",
+    "date": "2026-09-18T07:54:41Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "chore(scripts): add a push helper for the team's own GitHub repository"
+  },
+  {
+    "sha": "f3c72286",
+    "date": "2026-09-18T07:48:37Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "chore(deliverables): refresh the built technical report PDF"
+  },
+  {
+    "sha": "02c60fab",
+    "date": "2026-09-18T07:48:22Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(report): add the technical report and a reproducible PDF build"
+  },
+  {
+    "sha": "46f168d4",
+    "date": "2026-09-17T07:31:21Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "chore(scripts): drop the superseded .mjs model test stub"
+  },
+  {
+    "sha": "cae8075c",
+    "date": "2026-09-17T07:31:17Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(competition): add the official submission checklist and cut the demo script to 3-5 minutes"
+  },
+  {
+    "sha": "1a848844",
+    "date": "2026-09-16T10:12:19Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(evidence): model-driven path verified; lean config makes 8B work"
+  },
+  {
+    "sha": "577fbc8d",
+    "date": "2026-09-16T10:03:36Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(evidence): record measured results, the test matrix, and the open gap"
+  },
+  {
+    "sha": "ff3e5a32",
+    "date": "2026-09-16T10:01:07Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "chore(stats): exclude generated runtime and locale output from the upstream count"
+  },
+  {
+    "sha": "4ef29f21",
+    "date": "2026-09-16T10:00:25Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(readme): document the local-model path and tool-surface config"
+  },
+  {
+    "sha": "38ac45bc",
+    "date": "2026-09-16T09:56:18Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "﻿vendor(upstream): OpenClaw source snapshot at ad1c934 (unmodified)"
+  },
+  {
+    "sha": "69470e35",
+    "date": "2026-09-16T08:41:28Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs: repository README and demo video script"
+  },
+  {
+    "sha": "dda9f752",
+    "date": "2026-09-16T08:41:28Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "chore(tooling): skill install, sync, verification, and end-to-end harness"
+  },
+  {
+    "sha": "18f53817",
+    "date": "2026-09-16T08:41:28Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "feat(skill): add solar-glyph-simulation OpenClaw skill"
+  },
+  {
+    "sha": "30d9aada",
+    "date": "2026-09-16T08:41:21Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "docs(report): extension report for the OpenClaw photovoltaic skill"
+  },
+  {
+    "sha": "ffe0e83a",
+    "date": "2026-09-16T08:41:21Z",
+    "author": "SolarGlyph Skill Team",
+    "message": "feat(solarglyph): photovoltaic + waste-heat simulation service"
+  }
+]

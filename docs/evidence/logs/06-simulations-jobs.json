@@ -1,0 +1,73 @@
+﻿{
+    "count":  4,
+    "jobs":  [
+                 {
+                     "id":  "08dde2a7-f777-4dae-a57a-ff6ef0281e38",
+                     "status":  "succeeded",
+                     "stage":  "succeeded",
+                     "progress":  1,
+                     "createdAt":  "2026-10-28T12:48:58.987Z",
+                     "finishedAt":  "2026-10-28T12:49:02.087Z",
+                     "durationMs":  3100,
+                     "label":  "西北高辐照 10MWp 光伏 + 余热回收",
+                     "presetId":  "high-irradiance-10mw",
+                     "error":  null,
+                     "resultAvailable":  true,
+                     "links":  {
+                                   "self":  "/v1/simulations/08dde2a7-f777-4dae-a57a-ff6ef0281e38",
+                                   "result":  "/v1/simulations/08dde2a7-f777-4dae-a57a-ff6ef0281e38/result"
+                               }
+                 },
+                 {
+                     "id":  "571d67c6-b0bc-4e16-8a80-377fd93ba607",
+                     "status":  "succeeded",
+                     "stage":  "succeeded",
+                     "progress":  1,
+                     "createdAt":  "2026-10-28T12:48:54.838Z",
+                     "finishedAt":  "2026-10-28T12:48:57.942Z",
+                     "durationMs":  3104,
+                     "label":  "工业厂区屋顶光伏 5MWp + 余热回收",
+                     "presetId":  "industrial-rooftop-5mw",
+                     "error":  null,
+                     "resultAvailable":  true,
+                     "links":  {
+                                   "self":  "/v1/simulations/571d67c6-b0bc-4e16-8a80-377fd93ba607",
+                                   "result":  "/v1/simulations/571d67c6-b0bc-4e16-8a80-377fd93ba607/result"
+                               }
+                 },
+                 {
+                     "id":  "c1db62ef-a2bc-47f9-87cb-00b90d20f15a",
+                     "status":  "succeeded",
+                     "stage":  "succeeded",
+                     "progress":  1,
+                     "createdAt":  "2026-10-28T12:48:51.482Z",
+                     "finishedAt":  "2026-10-28T12:48:54.588Z",
+                     "durationMs":  3106,
+                     "label":  "E2E-verify",
+                     "presetId":  "industrial-rooftop-5mw",
+                     "error":  null,
+                     "resultAvailable":  true,
+                     "links":  {
+                                   "self":  "/v1/simulations/c1db62ef-a2bc-47f9-87cb-00b90d20f15a",
+                                   "result":  "/v1/simulations/c1db62ef-a2bc-47f9-87cb-00b90d20f15a/result"
+                               }
+                 },
+                 {
+                     "id":  "078956af-cd78-42cd-ad01-9bdcc847f33b",
+                     "status":  "succeeded",
+                     "stage":  "succeeded",
+                     "progress":  1,
+                     "createdAt":  "2026-10-28T12:48:47.303Z",
+                     "finishedAt":  "2026-10-28T12:48:50.427Z",
+                     "durationMs":  3124,
+                     "label":  "工业厂区屋顶光伏 5MWp + 余热回收",
+                     "presetId":  "industrial-rooftop-5mw",
+                     "error":  null,
+                     "resultAvailable":  true,
+                     "links":  {
+                                   "self":  "/v1/simulations/078956af-cd78-42cd-ad01-9bdcc847f33b",
+                                   "result":  "/v1/simulations/078956af-cd78-42cd-ad01-9bdcc847f33b/result"
+                               }
+                 }
+             ]
+}

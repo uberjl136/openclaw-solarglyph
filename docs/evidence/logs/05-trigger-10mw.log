@@ -1,0 +1,42 @@
+﻿# 运行时间: 2026-10-28 20:48:47
+# 命令: node skills/solar-glyph-simulation/scripts/trigger.cjs "西北高辐照 10MW"
+
+node : [solarglyph] trigger matched "西北高辐照 10MW" -> preset high-irradiance-10mw
+At line:26 char:6
++ $o = node scripts\trigger.cjs "西北高辐照 10MW" 2>&1 | Out-String
++      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([solarglyph] tr...irradiance-10mw:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[solarglyph] submitted job 08dde2a7-f777-4dae-a57a-ff6ef0281e38 (preset: high-irradiance-10mw)
+[solarglyph] loading-site-inputs 25%
+[solarglyph] solving-pv-and-waste-heat 70%
+[solarglyph] aggregating-results 90%
+[solarglyph] succeeded 100%
+────────────────────────────────────────────────────────────────
+SolarGlyph 光伏余热仿真结果  (job 08dde2a7-f777-4dae-a57a-ff6ef0281e38)
+────────────────────────────────────────────────────────────────
+场景          西北高辐照 10MWp 光伏 + 余热回收
+站点          lat 38.49°  水平面年辐照 1700 kWh/m²
+阵列          10000 kWp  倾角 33°  方位 0°
+
+倾斜面年辐照   2188.5 kWh/m²   (相对水平面 28.7%)
+年发电量       1569.4 万kWh   (15694 MWh)
+单位发电量     1569.4 kWh/kWp·年
+代表日        第 12 月：日发电 58549 kWh，峰值 7675 kW
+
+余热可利用      474 kW（2 路热源）
+余热回收功率    274 kW
+年回收热量      217.2 万kWh   (7821 GJ)
+ORC 年发电      30.4 万kWh
+可用年供热量    191.2 万kWh
+
+蓄热储能量      11424 kWh   24h 热损率 0.46%
+综合可用能量    1791.0 万kWh
+年减排 CO₂      1287.5 t
+────────────────────────────────────────────────────────────────
+热源明细:
+  • 燃气锅炉烟气余热               可用   428.4 kW → 回收   250.6 kW  年 197.6 万kWh
+  • 逆变器/变压器散热回收            可用    45.2 kW → 回收    23.6 kW  年 19.7 万kWh
+────────────────────────────────────────────────────────────────
+
