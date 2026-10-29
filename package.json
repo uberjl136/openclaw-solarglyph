@@ -18,6 +18,7 @@
     "test:model": "node scripts/test-model-driven.cjs",
     "stats": "node scripts/stats.cjs",
     "report": "node scripts/report/build-report.cjs",
+    "evidence": "node scripts/report/build-evidence-pdf.cjs",
     "check": "node scripts/verify-skill.cjs && node smoke.cjs"
   },
   "files": [
